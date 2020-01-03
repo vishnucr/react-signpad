@@ -1,0 +1,112 @@
+<html>
+    <!-- <script type="text/javascript">
+    var canvas, ctx, frame, isDrawing = false,
+        prevX = 0,
+        currX = 0,
+        prevY = 0,
+        currY = 0;
+
+    var x = "#458909", // color
+        y = 1; // stroke width
+    
+    function init() {
+        canvas = document.getElementById('can');
+        frame = canvas.getBoundingClientRect(); // getting outer bounds
+        ctx = canvas.getContext("2d");
+        // for clearing the canvas
+        w = canvas.width;
+        h = canvas.height;
+    
+        canvas.addEventListener("mousemove", function (e) {
+            findxy('move', e)
+        }, false);
+        canvas.addEventListener("mousedown", function (e) {
+            findxy('down', e)
+        }, false);
+        canvas.addEventListener("mouseup", function (e) {
+            findxy('up', e)
+        }, false);
+        canvas.addEventListener("mouseout", function (e) {
+            findxy('out', e)
+        }, false);
+    }
+
+    function findxy(res, e) {
+        if (res == 'down') {
+            prevX = currX;
+            prevY = currY;
+            currX = e.clientX - frame.left; // new x and y wref to top left corner
+            currY = e.clientY - frame.top;
+    
+            isDrawing = true;
+        }
+
+        if (res == 'up' || res == "out") {
+            isDrawing = false;
+        }
+
+        if (res == 'move') {
+            if (isDrawing) {
+                prevX = currX;
+                prevY = currY;
+                currX = e.clientX - frame.left;
+                currY = e.clientY - frame.top;
+                draw();
+            }
+        }
+    }
+    
+    function draw() {
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(currX, currY);
+        ctx.strokeStyle = x;
+        ctx.lineWidth = y;
+        ctx.stroke();
+        ctx.closePath();
+    }
+    
+    function erase() {
+        var m = confirm("Want to clear");
+        if (m) {
+            ctx.clearRect(0, 0, w, h);
+            document.getElementById("canvasimg").style.display = "none";
+        }
+    }
+    
+    function save() {
+        document.getElementById("canvasimg").style.border = "2px solid";
+        var dataURL = canvas.toDataURL();
+        document.getElementById("canvasimg").src = dataURL;
+        document.getElementById("canvasimg").style.display = "inline";
+    }
+    
+
+    </script> -->
+    <head>
+        <style>
+            #sketch {
+                border: 10px solid gray;
+                height: 100%;
+                position: relative;
+            }
+
+            #tmp_canvas {
+                position: absolute;
+                left: 0px; right: 0;
+                bottom: 0; top: 0;
+                cursor: crosshair;
+            }    
+        </style>
+    </head>
+    <body>
+        <!-- <canvas id="can" width="400" height="400" style="position:absolute;top:10%;left:10%;border:2px solid;"></canvas>
+        <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
+        <input type="button" value="save" id="btn" size="30" onclick="save()" style="position:absolute;top:55%;left:10%;">
+        <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:55%;left:15%;"> -->
+        <div id="sketch">
+            <canvas id="paint"></canvas>
+        </div>
+        <script src="test.js"></script>
+    </body>
+    </html>

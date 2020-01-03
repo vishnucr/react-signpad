@@ -1,0 +1,5 @@
+.app{
+    display: flex;
+    align-items: center; /* vertical*/
+    justify-content: center; /*horizontal*/
+}
