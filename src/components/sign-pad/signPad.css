@@ -1,46 +1,56 @@
-.container{
+.container {
     position: relative;
     padding: 1rem;
 }
-.modal{
+
+.modal {
     width: 100vw;
     height: 100vh;
     position: fixed;
     left: 0;
     top: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
     z-index: 99999;
+    display: none;
 }
-.modal > canvas {
+
+.modal>.signPad {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
-    background-color: #fff;
-    
+    transform: translate(-50%, -50%);
 }
-.image{
+
+.modal>.signPad>canvas {
+    background-color: #fff;
+}
+
+.image {
     /* position: absolute; */
     margin: 0;
 }
-.image > img {
+
+.image>img {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
-.signpad{
+
+.signpad {
     border: 1px solid #ccc;
     border-radius: 3px;
     margin-bottom: 15px;
 }
-.buttons{
-    display:flex;
+
+.buttons {
+    display: flex;
     margin: 0;
 }
-.buttons button{
+
+.buttons button {
     border: 1px solid #ccc;
     border-radius: 3px;
-    background: transparent;
+    background: #fff;
     padding: 10px 15px;
-    margin-right: 1rem;
+    margin-right: 10px;
     cursor: pointer;
 }
