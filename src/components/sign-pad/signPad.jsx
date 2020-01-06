@@ -2,9 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import './signPad.css';
 import getPlaceholder from './getPlaceholder';
 // Point TS
-// class IBasicPoint {
-//   constructor(x, y, time) { this.x = x; this.y = y; this.time = time; };
-// }
 class Point {
   constructor(x, y, time) {
     this.x = x;
@@ -29,12 +26,10 @@ class Point {
   }
 }
 
-// Bezier TS
 class Bezier {
   static fromPoints(points, widths, ) {
     const c2 = this.calculateControlPoints(points[0], points[1], points[2]).c2;
     const c3 = this.calculateControlPoints(points[1], points[2], points[3]).c1;
-    // console.log( new Bezier(points[1], c2, c3, points[2], widths.start, widths.end));
     return new Bezier(points[1], c2, c3, points[2], widths.start, widths.end);
   }
 
@@ -111,9 +106,7 @@ class Bezier {
   }
 }
 
-// Signature Pad TS******************************************|||||||||||||||||||||||||||||
 function SignaturePad(canvas, options) {
-  // Public stuff
   let dotSize;
   let minWidth;
   let maxWidth;
@@ -123,8 +116,8 @@ function SignaturePad(canvas, options) {
   let velocityFilterWeight;
   let onBegin;
   let onEnd;
+  let dpr = window.devicePixelRatio | 1;
 
-  // Private stuff
   let _ctx;
   let _mouseButtonDown;
   let _isEmpty;
@@ -132,13 +125,11 @@ function SignaturePad(canvas, options) {
   let _data = []; // Stores all points in groups (one group per line or dot)
   let _lastVelocity;
   let _lastWidth;
-  // let _strokeMoveUpdate;
-  /* tslint:enable: variable-name */
 
   function init() {
-    velocityFilterWeight = options.velocityFilterWeight || 0.85;
+    velocityFilterWeight = options.velocityFilterWeight || 0.7;
     minWidth = options.minWidth || 0.5;
-    maxWidth = options.maxWidth || 2;
+    maxWidth = options.maxWidth || 2.5;
     minDistance = ('minDistance' in options ? options.minDistance : 5); // in pixels
     dotSize = options.dotSize || function dotSize() {
       return (minWidth + maxWidth) / 2;
@@ -179,15 +170,20 @@ function SignaturePad(canvas, options) {
     canvas.style.touchAction = 'none';
     canvas.style.msTouchAction = 'none';
     _handleMouseEvents();
+    _handleTouchEvents();
   }
   function off() {
     // Enable panning/zooming when touching canvas element
     canvas.style.touchAction = 'auto';
     canvas.style.msTouchAction = 'auto';
-
+    // Removing mouse events
     canvas.removeEventListener('mousedown', _handleMouseDown);
     canvas.removeEventListener('mousemove', _handleMouseMove);
     document.removeEventListener('mouseup', _handleMouseUp);
+    // Removing Touch Events
+    canvas.removeEventListener('touchstart', _handleTouchStart);
+    canvas.removeEventListener('touchmove', _handleTouchMove);
+    canvas.removeEventListener('touchend', _handleTouchEnd);
 
   }
 
@@ -198,7 +194,10 @@ function SignaturePad(canvas, options) {
   function fromData(pointGroups) {
     clear();
 
-    _fromData(pointGroups, ({ color, curve }) => _drawCurve({ color, curve }), ({ color, point }) => _drawDot({ color, point }),
+    _fromData(
+      pointGroups,
+      ({ color, curve }) => _drawCurve({ color, curve }),
+      ({ color, point }) => _drawDot({ color, point }),
     );
 
     _data = pointGroups;
@@ -215,6 +214,12 @@ function SignaturePad(canvas, options) {
     canvas.addEventListener('mousemove', _handleMouseMove);
     document.addEventListener('mouseup', _handleMouseUp);
   }
+  function _handleTouchEvents() {
+    canvas.addEventListener('touchstart', _handleTouchStart);
+    canvas.addEventListener('touchmove', _handleTouchMove);
+    canvas.addEventListener('touchend', _handleTouchEnd);
+  }
+
   // Event handlers
   // MOUSE
   let _handleMouseDown = (event) => {
@@ -223,17 +228,41 @@ function SignaturePad(canvas, options) {
       _strokeBegin(event);
     }
   };
-
   let _handleMouseMove = (event) => {
     if (_mouseButtonDown) {
       _strokeUpdate(event);
     }
   };
-
   let _handleMouseUp = (event) => {
     if (event.which === 1 && _mouseButtonDown) {
       _mouseButtonDown = false;
       _strokeEnd(event);
+    }
+  };
+  // TOUCH
+  let _handleTouchStart = (event) => {
+    // Prevent scrolling.
+    event.preventDefault();
+
+    if (event.targetTouches.length === 1) {
+      const touch = event.changedTouches[0];
+      _strokeBegin(touch);
+    }
+  };
+  let _handleTouchMove = (event) => {
+    // Prevent scrolling.
+    event.preventDefault();
+
+    const touch = event.targetTouches[0];
+    _strokeUpdate(touch);
+  };
+  let _handleTouchEnd = (event) => {
+    const wasCanvasTouched = event.target === canvas;
+    if (wasCanvasTouched) {
+      event.preventDefault();
+
+      const touch = event.changedTouches[0];
+      _strokeEnd(touch);
     }
   };
 
@@ -439,7 +468,7 @@ function SignaturePad(canvas, options) {
 
   init();
 
-  return { clear, _ctx, canvas }
+  return { clear, _ctx, canvas, dpr }
 }
 
 export default function SignPad(props) {
@@ -458,7 +487,7 @@ export default function SignPad(props) {
   let approve = () => {
   }
   let generateData = () => {
-    setImageData({ data: canvas.current.toDataURL() })
+    setImageData({ data: canvas.current.toDataURL('image/png',1.0) })
   }
   let _launchModal = () => {
     setModal({ state: true });
@@ -470,12 +499,14 @@ export default function SignPad(props) {
 
   useEffect(() => {
     signPad = SignaturePad(canvas.current, {});
-    canvas.current.width = props.width || 300;
-    canvas.current.height = props.height || 200;
+    canvas.current.width = (props.width || 300) * signPad.dpr;
+    canvas.current.height = (props.height || 200) * signPad.dpr;
   })
 
   return (
     <section className="container">
+      {/* <canvas ref={canvas}></canvas> */}
+      {/* Modal */}
       <section className="modal" style={modal.state ? { display: 'block' } : { display: 'none' }} >
         <div className="signPad">
           <canvas ref={canvas}></canvas>
@@ -492,7 +523,6 @@ export default function SignPad(props) {
         <button onClick={clear}>clear</button>
         <button onClick={approve}>Approve Signature</button>
       </p>
-
     </section>
   )
 }
