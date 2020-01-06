@@ -116,7 +116,7 @@ function SignaturePad(canvas, options) {
   let velocityFilterWeight;
   let onBegin;
   let onEnd;
-  let dpr = window.devicePixelRatio | 1;
+  let dpr = window.devicePixelRatio || 1;
 
   let _ctx;
   let _mouseButtonDown;
@@ -474,54 +474,29 @@ function SignaturePad(canvas, options) {
 export default function SignPad(props) {
   const canvas = useRef(null);
   const image = useRef();
-  const [modal, setModal] = useState({ state: false });
-  const [imageData, setImageData] = useState({ data: getPlaceholder() });
 
   let signPad;
-  let clear = () => {
-    setImageData({ data: getPlaceholder() })
+  let save = () => {
+    image.current.src = canvas.current.toDataURL();
   };
-  let reset = () => {
+  let clear = () => {
     signPad.clear();
-  }
-  let approve = () => {
-  }
-  let generateData = () => {
-    setImageData({ data: canvas.current.toDataURL('image/png',1.0) })
-  }
-  let _launchModal = () => {
-    setModal({ state: true });
-  }
-  let _closeModal = () => {
-    generateData();
-    setModal({ state: false });
   }
 
   useEffect(() => {
     signPad = SignaturePad(canvas.current, {});
     canvas.current.width = (props.width || 300) * signPad.dpr;
     canvas.current.height = (props.height || 200) * signPad.dpr;
+    image.current.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSc58V80h28Qoxye-8Kr20JabBHl3O_VjXjWMj5FgtDZkmFTyeS"
   })
 
   return (
     <section className="container">
-      {/* <canvas ref={canvas}></canvas> */}
-      {/* Modal */}
-      <section className="modal" style={modal.state ? { display: 'block' } : { display: 'none' }} >
-        <div className="signPad">
-          <canvas ref={canvas}></canvas>
-          <p className="buttons">
-            <button onClick={_closeModal}>Done</button>
-            <button onClick={reset}>Reset</button>
-          </p>
-        </div>
-      </section>
-      <p className="image" onClick={_launchModal}>
-        <img src={imageData.data} ref={image} alt="sign here" />
-      </p>
+      <canvas ref={canvas}></canvas>
+      <img ref={image} alt="sign here" />
       <p className="buttons">
         <button onClick={clear}>clear</button>
-        <button onClick={approve}>Approve Signature</button>
+        <button onClick={save}>Save</button>
       </p>
     </section>
   )
