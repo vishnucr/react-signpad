@@ -2,6 +2,18 @@
     position: relative;
     padding: 1rem;
 }
+.image{
+    width: 640px;
+    height: 480px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    margin: 0;
+}
+.image > img{
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
 canvas {
     border: 1px solid #ccc;
     background-color: #fff;
@@ -9,15 +21,33 @@ canvas {
 .buttons {
     display: flex;
     margin: 0;
+    padding: 5px 0;
 }
 
-.buttons button {
-    border: 1px solid #ccc;
-    border-radius: 3px;
+.buttons > button {
+    border: none;
+    border-radius: 2px;
     background: #fff;
-    padding: 10px 15px;
+    padding: 8px 15px;
     margin-right: 10px;
     cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease-in;
+}
+
+.buttons > button.primary{
+    background-color: darkcyan;
+    color: #fff;
+}
+.buttons > button.primary:hover{
+    color: #ccc;
+}
+.buttons > button.secondary{
+    background-color: #ccc;
+    color: #888;
+}
+.buttons > button.secondary:hover{
+    color: #222;
 }
 
 /* The Modal (background) */

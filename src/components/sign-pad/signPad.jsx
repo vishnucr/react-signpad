@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './signPad.css';
-import getPlaceholder from './getPlaceholder';
+// import getPlaceholder from './getPlaceholder';
+import placeholder from './placeholder.png';
+
 // Point TS
 class Point {
   constructor(x, y, time) {
@@ -480,15 +482,23 @@ export default function SignPad(props) {
   // Methods
   let save = () => {
     image.current.src = canvas.current.toDataURL();
+    closeModal();
+  }
+  let approve = () => {
+
   }
   let clear = () => {
     signPad.clear();
+  }
+  let clearImage = () => {
+    image.current.src = placeholder;
   }
   let openModal = () => {
     modal.current.style.display = 'block';
   }
   let closeModal = () => {
     modal.current.style.display = 'none';
+    signPad.clear();
   }
   // click outside to close modal
   
@@ -497,16 +507,18 @@ export default function SignPad(props) {
     signPad = SignaturePad(canvas.current, {});
     canvas.current.width = (props.width || 300) * signPad.dpr;
     canvas.current.height = (props.height || 200) * signPad.dpr;
-    image.current.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSc58V80h28Qoxye-8Kr20JabBHl3O_VjXjWMj5FgtDZkmFTyeS"
+    image.current.src = placeholder;
   })
 
   return (
     <section className="container">
       {/* <canvas ref={canvas}></canvas> */}
-      <img ref={image} onClick={openModal} alt="sign here" />
+      <figure className="image" height={props.height} width={props.width}>
+        <img ref={image} onClick={openModal} alt="sign here" />
+      </figure>
       <p className="buttons">
-        <button onClick={clear}>clear</button>
-        <button onClick={save}>Save</button>
+        <button className="secondary" onClick={clearImage}>Clear</button>
+        <button className="primary" onClick={approve}>Approve</button>
       </p>
       <div ref={modal} className="modal">
         <div className="modal-content">
@@ -517,8 +529,8 @@ export default function SignPad(props) {
               </p>
             <canvas ref={canvas}></canvas>
             <p className="buttons">
-              <button onClick={save}>Confirm</button>
-              <button onClick={closeModal}>Cancel</button>
+              <button className="primary" onClick={save}>Confirm</button>
+              <button className="secondary" onClick={closeModal}>Cancel</button>
             </p>
           </section>
         </div>
