@@ -472,17 +472,27 @@ function SignaturePad(canvas, options) {
 }
 
 export default function SignPad(props) {
-  const canvas = useRef(null);
-  const image = useRef();
-
+  const canvas  = useRef();
+  const image   = useRef();
+  const modal   = useRef();
+  const close   = useRef();
   let signPad;
+  // Methods
   let save = () => {
     image.current.src = canvas.current.toDataURL();
-  };
+  }
   let clear = () => {
     signPad.clear();
   }
-
+  let openModal = () => {
+    modal.current.style.display = 'block';
+  }
+  let closeModal = () => {
+    modal.current.style.display = 'none';
+  }
+  // click outside to close modal
+  
+  // Hooks lifecycle
   useEffect(() => {
     signPad = SignaturePad(canvas.current, {});
     canvas.current.width = (props.width || 300) * signPad.dpr;
@@ -492,12 +502,28 @@ export default function SignPad(props) {
 
   return (
     <section className="container">
-      <canvas ref={canvas}></canvas>
-      <img ref={image} alt="sign here" />
+      {/* <canvas ref={canvas}></canvas> */}
+      <img ref={image} onClick={openModal} alt="sign here" />
       <p className="buttons">
         <button onClick={clear}>clear</button>
         <button onClick={save}>Save</button>
       </p>
+      <div ref={modal} className="modal">
+        <div className="modal-content">
+          <section>
+            <p ref={close} onClick={closeModal} className="close">
+              Draw your signature.
+              <span>&times;</span>
+              </p>
+            <canvas ref={canvas}></canvas>
+            <p className="buttons">
+              <button onClick={save}>Confirm</button>
+              <button onClick={closeModal}>Cancel</button>
+            </p>
+          </section>
+        </div>
+
+      </div>
     </section>
   )
 }

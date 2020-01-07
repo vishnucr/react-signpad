@@ -7,7 +7,7 @@ import SingPad from './components/sign-pad/signPad';
 function App() {
   return (
     <div className="app">
-      <SingPad width="650" height="450"></SingPad> 
+      <SingPad width="640" height="480"></SingPad> 
     </div>
   );
 }
